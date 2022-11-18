@@ -22,17 +22,19 @@ class News {
     );
 
   Document? document;
+
   List<List<String?>> titles =
       List.filled(0, [].cast<String?>(), growable: true);
   List<List<String?>> hrefs =
       List.filled(0, [].cast<String?>(), growable: true);
   List<List<String?>> created =
       List.filled(0, [].cast<String?>(), growable: true);
+  Map<String, dynamic> maps = {};
   // maps = {
   // "titles" : [ newList, newList1, ... ]
   // "links" :  [ ..., ... ]
+  // "created" :  [ ..., ... ]
   // }
-  Map<String, dynamic> maps = {};
 
   Future<Map<String, dynamic>> initialize() async {
     titles.clear();
@@ -52,14 +54,18 @@ class News {
         .then(((res) {
       if (res.statusCode == 200) {
         document = parse(res.data);
-        final List<Element>? links = document?.querySelectorAll(".sbj");
-        final List<Element>? dates =
-            document?.querySelectorAll(".date").sublist(1);
+        if (document != null) {
+          final List<Element?> links = document!.querySelectorAll(".sbj");
+          final List<Element?> dates =
+              document!.querySelectorAll(".date").sublist(1);
 
-        for (var i = 0; i < ((links?.length) ?? [].length); i++) {
-          newList.add(links?[i].innerHtml.toString().trim());
-          aHrefs.add(links?[i].attributes["href"]?.trim());
-          when.add(dates?[i].innerHtml.toString().trim());
+          for (var i = 0; i < ((links.length)); i++) {
+            newList.add(links[i]?.innerHtml.toString().trim());
+            aHrefs.add(links[i]?.attributes["href"]?.toString().trim());
+            when.add(dates[i]?.innerHtml.toString().trim());
+          }
+        } else {
+          throw Exception("document is null");
         }
       }
     })).catchError((e) => throw Exception(e));
