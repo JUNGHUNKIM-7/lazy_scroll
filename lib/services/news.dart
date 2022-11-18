@@ -35,9 +35,9 @@ class News {
   Map<String, dynamic> maps = {};
 
   Future<Map<String, dynamic>> initialize() async {
-    titles = [];
-    hrefs = [];
-    created = [];
+    titles.clear();
+    hrefs.clear();
+    created.clear();
     return await getGlobal(0);
   }
 
