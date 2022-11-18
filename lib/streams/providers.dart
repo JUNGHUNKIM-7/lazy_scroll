@@ -27,12 +27,12 @@ final integerProvider = StateProvider.family<int, IntegerType>((ref, type) {
   }
 });
 
-final overSeasNewsStream =
-    StreamProvider.family<Map<String, List<List<String?>>>, int>(
-        (ref, page) async* {
+final initialOverSeasNewsStream =
+    StreamProvider<Map<String, List<List<String?>>>>(
+        (ref) async* {
   final sinkController = ref.watch(sinkControllerProvider);
   final controllers = sinkController.controllers;
   final news = sinkController.news;
-  controllers.overseasNews.setState = await news.getGlobal(page);
+  controllers.overseasNews.setState = await news.getGlobal(0);
   yield* sinkController.controllers.overseasNews.bStream;
 });

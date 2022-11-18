@@ -65,7 +65,7 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final overseasMarket$ = ref.watch(overSeasNewsStream(0));
+    final overseasMarket$ = ref.watch(initialOverSeasNewsStream);
 
     return RefreshIndicator(
       onRefresh: () async => _onInit(ref),
