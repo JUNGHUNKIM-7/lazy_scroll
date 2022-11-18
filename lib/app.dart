@@ -25,7 +25,7 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final idx = ref.watch(integerProvider(IntegerType.bottomNavigation));
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: const Color(0xFFe5e5e5),
       extendBody: true,
       bottomNavigationBar:
           MainBottomNavigation(idx: idx, bottomItems: bottomItems),
@@ -75,31 +75,35 @@ class _HomeState extends ConsumerState<Home> {
           overseasMarket$.when(
             error: (err, stk) => Text('$err $stk'),
             loading: () => const Center(child: CircularProgressIndicator()),
-            data: (Map<String, dynamic> data) {
+            data: (Map<String, List<List<String?>>> m) {
               log("${overseasMarket$.value}");
-              final datas = data["titles"];
-              final links = data["hrefs"];
-              final created = data["created"];
+              final titles = m["titles"];
+              final hrefs = m["hrefs"];
+              final created = m["created"];
 
-              return ListView(
-                primary: false,
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                children: [
-                  for (var i = 0; i < datas.length; i++)
-                    for (var j = 0; j < datas[i].length; j++)
-                      Column(
-                        children: [
-                          DataTile(
-                            header: datas[i][j] ?? "",
-                            url: links[i][j] ?? "",
-                            created: created[i][j] ?? "",
-                          ),
-                          const Divider(thickness: 2),
-                        ],
-                      )
-                ],
-              );
+              if (titles != null && hrefs != null && created != null) {
+                return ListView(
+                  primary: false,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  children: [
+                    for (var i = 0; i < titles.length; i++)
+                      for (var j = 0; j < titles[i].length; j++)
+                        Column(
+                          children: [
+                            DataTile(
+                              header: titles[i][j] ?? "",
+                              url: hrefs[i][j] ?? "",
+                              created: created[i][j] ?? "",
+                            ),
+                            const Divider(thickness: 1),
+                          ],
+                        )
+                  ],
+                );
+              } else {
+                return Container();
+              }
             },
           ),
         ],

@@ -5,7 +5,7 @@ class SingleControllers {
   SingleControllers._();
   factory SingleControllers.getInstance() => SingleControllers._();
 
-  final overseasNews = SingleController<Map<String, dynamic>>({});
+  final overseasNews = SingleController<Map<String, List<List<String?>>>>({});
 }
 
 class SinkController {

@@ -28,7 +28,8 @@ final integerProvider = StateProvider.family<int, IntegerType>((ref, type) {
 });
 
 final overSeasNewsStream =
-    StreamProvider.family<Map<String, dynamic>, int>((ref, page) async* {
+    StreamProvider.family<Map<String, List<List<String?>>>, int>(
+        (ref, page) async* {
   final sinkController = ref.watch(sinkControllerProvider);
   final controllers = sinkController.controllers;
   final news = sinkController.news;

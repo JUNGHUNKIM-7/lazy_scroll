@@ -23,30 +23,30 @@ class News {
 
   Document? document;
 
-  List<List<String?>> titles =
+  final List<List<String?>>  titles =
       List.filled(0, [].cast<String?>(), growable: true);
-  List<List<String?>> hrefs =
+  final List<List<String?>> hrefs =
       List.filled(0, [].cast<String?>(), growable: true);
-  List<List<String?>> created =
+  final List<List<String?>> created =
       List.filled(0, [].cast<String?>(), growable: true);
-  Map<String, dynamic> maps = {};
+  final Map<String, List<List<String?>>> maps = {};
   // maps = {
   // "titles" : [ newList, newList1, ... ]
   // "links" :  [ ..., ... ]
   // "created" :  [ ..., ... ]
   // }
 
-  Future<Map<String, dynamic>> initialize() async {
+  Future<Map<String, List<List<String?>>>> initialize() async {
     titles.clear();
     hrefs.clear();
     created.clear();
     return await getGlobal(0);
   }
 
-  Future<Map<String, dynamic>> getGlobal(int idx) async {
-    List<String?> newList = [];
-    List<String?> when = [];
-    List<String?> aHrefs = [];
+  Future<Map<String, List<List<String?>>>> getGlobal(int idx) async {
+    final newList = List<String?>.empty(growable: true);
+    final when = List<String?>.empty(growable: true);
+    final aHrefs = List<String?>.empty(growable: true);
 
     await dio
         .get(
