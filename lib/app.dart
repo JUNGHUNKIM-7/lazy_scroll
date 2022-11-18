@@ -79,6 +79,7 @@ class _HomeState extends ConsumerState<Home> {
               log("${overseasMarket$.value}");
               final datas = data["titles"];
               final links = data["hrefs"];
+              final created = data["created"];
 
               return ListView(
                 primary: false,
@@ -92,6 +93,7 @@ class _HomeState extends ConsumerState<Home> {
                           DataTile(
                             header: datas[i][j] ?? "",
                             url: links[i][j] ?? "",
+                            created: created[i][j] ?? "",
                           ),
                           const Divider(thickness: 2),
                         ],
@@ -107,13 +109,12 @@ class _HomeState extends ConsumerState<Home> {
 
   Future<void> _onInit(WidgetRef ref) async {
     final sinkController = ref.watch(sinkControllerProvider);
-    final data = await sinkController.news.getGlobal(0);
-    sinkController.controllers.overseasNews.setState = {}
-      ..putIfAbsent("titles", () => data["titles"])
-      ..putIfAbsent("hrefs", () => data["hrefs"]);
+    final data = await sinkController.news.initialize();
+    sinkController.controllers.overseasNews.setState = data;
   }
 
   Future<void> _onRefresh(WidgetRef ref) async {
+    //sync scroll count + fetching data(pagination)
     ref.read(integerProvider(IntegerType.scrollIdx).notifier).state =
         ref.watch(integerProvider(IntegerType.scrollIdx)) + 1;
     final sinkController = ref.watch(sinkControllerProvider);
@@ -128,10 +129,12 @@ class DataTile extends ConsumerWidget {
     super.key,
     required this.header,
     required this.url,
+    required this.created,
   });
 
   final String header;
   final String url;
+  final String created;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -139,6 +142,7 @@ class DataTile extends ConsumerWidget {
       onTap: () => _launch(url),
       child: ListTile(
         title: Text(header),
+        trailing: Text(created),
       ),
     );
   }
