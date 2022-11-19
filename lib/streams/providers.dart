@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/datas.dart';
 import '../services/news.dart';
 import 'controllers.dart';
 import 'enums.dart';
@@ -27,12 +28,10 @@ final integerProvider = StateProvider.family<int, IntegerType>((ref, type) {
   }
 });
 
-final initialOverSeasNewsStream =
-    StreamProvider<Map<String, List<List<String?>>>>(
-        (ref) async* {
-  final sinkController = ref.watch(sinkControllerProvider);
+final filteredProvider = StreamProvider<List<DataMap>>((ref) async* {
+  final SinkController sinkController = ref.watch(sinkControllerProvider);
   final controllers = sinkController.controllers;
   final news = sinkController.news;
   controllers.overseasNews.setState = await news.getGlobal(0);
-  yield* sinkController.controllers.overseasNews.bStream;
+  yield* sinkController.filteredBySearchValue;
 });

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_news/models/datas.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' show parse;
 
@@ -23,27 +24,9 @@ class News {
 
   Document? document;
 
-  final List<List<String?>>  titles =
-      List.filled(0, [].cast<String?>(), growable: true);
-  final List<List<String?>> hrefs =
-      List.filled(0, [].cast<String?>(), growable: true);
-  final List<List<String?>> created =
-      List.filled(0, [].cast<String?>(), growable: true);
-  final Map<String, List<List<String?>>> maps = {};
-  // maps = {
-  // "titles" : [ newList, newList1, ... ]
-  // "links" :  [ ..., ... ]
-  // "created" :  [ ..., ... ]
-  // }
+  final List<DataMap> datas = List<DataMap>.empty(growable: true);
 
-  Future<Map<String, List<List<String?>>>> initialize() async {
-    titles.clear();
-    hrefs.clear();
-    created.clear();
-    return await getGlobal(0);
-  }
-
-  Future<Map<String, List<List<String?>>>> getGlobal(int idx) async {
+  Future<List<DataMap>> getGlobal(int idx) async {
     final newList = List<String?>.empty(growable: true);
     final when = List<String?>.empty(growable: true);
     final aHrefs = List<String?>.empty(growable: true);
@@ -59,7 +42,7 @@ class News {
           final List<Element?> dates =
               document!.querySelectorAll(".date").sublist(1);
 
-          for (var i = 0; i < ((links.length)); i++) {
+          for (var i = 0; i < links.length; i++) {
             newList.add(links[i]?.innerHtml.toString().trim());
             aHrefs.add(links[i]?.attributes["href"]?.toString().trim());
             when.add(dates[i]?.innerHtml.toString().trim());
@@ -70,30 +53,38 @@ class News {
       }
     })).catchError((e) => throw Exception(e));
 
-    if (maps.containsKey(NewsType.titles.value) &&
-        maps.containsKey(NewsType.herfs.value) &&
-        maps.containsKey(NewsType.created.value)) {
-      titles.add(newList);
-      hrefs.add(aHrefs);
-      created.add(when);
-
-      maps[NewsType.titles.value] = titles;
-      maps[NewsType.herfs.value] = hrefs;
-      maps[NewsType.created.value] = created;
-    } else {
-      maps.putIfAbsent(NewsType.titles.value, () {
-        titles.add(newList);
-        return titles;
-      });
-      maps.putIfAbsent(NewsType.herfs.value, () {
-        hrefs.add(aHrefs);
-        return hrefs;
-      });
-      maps.putIfAbsent(NewsType.created.value, () {
-        created.add(when);
-        return created;
-      });
+    if (newList.length != aHrefs.length ||
+        newList.length != when.length ||
+        aHrefs.length != when.length) {
+      throw Exception("length isn't matched");
     }
-    return maps;
+
+    final List<List<String?>> dataList = [newList, aHrefs, when];
+
+    final mapped = [
+      for (var i = 0; i < dataList[1].length; i++)
+        DataMap(
+            title: dataList.first[i] ?? "",
+            href: dataList[1][i] ?? "",
+            created: dataList.last[i] ?? "")
+    ];
+
+    if (idx == 0) {
+      //initialize
+      datas.addAll(mapped);
+    }
+
+    // [DataMap(title, ..), Datamap(title,. ..) ..]
+    return mapped;
+  }
+
+  Future<List<DataMap>> initialize() async {
+    return await getGlobal(0);
+  }
+
+  Future<List<DataMap>> onRefresh(int idx) async {
+    final newDatas = await getGlobal(idx);
+    datas.addAll(newDatas);
+    return datas;
   }
 }

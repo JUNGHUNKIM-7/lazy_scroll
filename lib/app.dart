@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'component/global/global_component.dart';
+import 'models/datas.dart';
 import 'streams/enums.dart';
 import 'streams/providers.dart';
 
@@ -25,6 +24,16 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final idx = ref.watch(integerProvider(IntegerType.bottomNavigation));
     return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: const PreferredSize(
+          preferredSize: Size.fromHeight(200),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: SearchField(),
+          ),
+        ),
+        backgroundColor: Colors.grey[300],
+      ),
       backgroundColor: const Color(0xFFe5e5e5),
       extendBody: true,
       bottomNavigationBar:
@@ -65,8 +74,7 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final overseasMarket$ = ref.watch(initialOverSeasNewsStream);
-
+    final overseasMarket$ = ref.watch(filteredProvider);
     return RefreshIndicator(
       onRefresh: () async => _onInit(ref),
       child: ListView(
@@ -75,35 +83,26 @@ class _HomeState extends ConsumerState<Home> {
           overseasMarket$.when(
             error: (err, stk) => Text('$err $stk'),
             loading: () => const Center(child: CircularProgressIndicator()),
-            data: (Map<String, List<List<String?>>> m) {
-              log("${overseasMarket$.value}");
-              final titles = m["titles"];
-              final hrefs = m["hrefs"];
-              final created = m["created"];
-
-              if (titles != null && hrefs != null && created != null) {
-                return ListView(
-                  primary: false,
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  children: [
-                    for (var i = 0; i < titles.length; i++)
-                      for (var j = 0; j < titles[i].length; j++)
-                        Column(
-                          children: [
-                            DataTile(
-                              header: titles[i][j] ?? "",
-                              url: hrefs[i][j] ?? "",
-                              created: created[i][j] ?? "",
-                            ),
-                            const Divider(thickness: 1),
-                          ],
-                        )
-                  ],
-                );
-              } else {
-                return Container();
-              }
+            data: (List<DataMap> l$) {
+              return ListView.builder(
+                itemCount: l$.length,
+                itemBuilder: (context, index) {
+                  final e = l$[index];
+                  return Column(
+                    children: [
+                      DataTile(
+                        header: e.title ?? "",
+                        url: e.href ?? "",
+                        created: e.created ?? "",
+                      ),
+                      const Divider(thickness: 1),
+                    ],
+                  );
+                },
+                primary: false,
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+              );
             },
           ),
         ],
@@ -118,12 +117,11 @@ class _HomeState extends ConsumerState<Home> {
   }
 
   Future<void> _onRefresh(WidgetRef ref) async {
-    //sync scroll count + fetching data(pagination)
     ref.read(integerProvider(IntegerType.scrollIdx).notifier).state =
         ref.watch(integerProvider(IntegerType.scrollIdx)) + 1;
     final sinkController = ref.watch(sinkControllerProvider);
     final data = await sinkController.news
-        .getGlobal(ref.watch(integerProvider(IntegerType.scrollIdx)));
+        .onRefresh(ref.watch(integerProvider(IntegerType.scrollIdx)));
     sinkController.controllers.overseasNews.setState = data;
   }
 }

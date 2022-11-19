@@ -43,6 +43,8 @@ dependencies:
   html: ^0.15.1
   dio: ^4.0.6
   custom_refresh_indicator: ^2.0.0-dev.1
+  freezed_annotation: ^2.2.0
+  json_annotation: ^4.7.0
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +58,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   build_runner:
   riverpod_generator: ^1.0.4
+  freezed: ^2.2.1
+  json_serializable: ^6.5.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
