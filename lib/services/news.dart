@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_news/models/datas.dart';
+import 'package:flutter_news/models/datamap.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' show parse;
 
@@ -56,7 +56,7 @@ class News {
     if (newList.length != aHrefs.length ||
         newList.length != when.length ||
         aHrefs.length != when.length) {
-      throw Exception("length isn't matched");
+      throw Exception("len isn't matched");
     }
 
     final List<List<String?>> dataList = [newList, aHrefs, when];

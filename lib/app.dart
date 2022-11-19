@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'component/global/global_component.dart';
-import 'models/datas.dart';
+import 'models/datamap.dart';
 import 'streams/enums.dart';
 import 'streams/providers.dart';
 
@@ -11,8 +11,8 @@ class App extends ConsumerWidget {
   const App({super.key});
 
   static const List bottomItems = [
-    [Icons.abc, "Home"],
-    [Icons.add, "Home2"]
+    [Icons.home, "Home"],
+    [Icons.info_rounded, "Home2"]
   ];
 
   static final bodies = <Widget>[
@@ -25,13 +25,7 @@ class App extends ConsumerWidget {
     final idx = ref.watch(integerProvider(IntegerType.bottomNavigation));
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: const PreferredSize(
-          preferredSize: Size.fromHeight(200),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: SearchField(),
-          ),
-        ),
+        flexibleSpace: const AppBarSpace(),
         backgroundColor: Colors.grey[300],
       ),
       backgroundColor: const Color(0xFFe5e5e5),
@@ -42,6 +36,8 @@ class App extends ConsumerWidget {
     );
   }
 }
+
+
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -140,8 +136,9 @@ class DataTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    const testUrl = "https://www.kita.net/cmmrcInfo/cmmrcNews/overseasMrktNews/overseasMrktNewsDetail.do?searchOpenYn=&pageIndex=1&nIndex=1828557&type=0&searchReqType=detail&categorySearch=ALL&searchStartDate=&searchEndDate=&searchCondition=TITLE&searchKeyword=&continent_nm=&continent_cd=&country_nm=&country_cd=&sector_nm=&sector_cd=&itemCd_nm=&itemCd_cd=";
     return GestureDetector(
-      onTap: () => _launch(url),
+      onTap: () => _launch(testUrl),
       child: ListTile(
         title: Text(header),
         trailing: Text(created),
@@ -153,8 +150,6 @@ class DataTile extends ConsumerWidget {
     assert(url.isNotEmpty);
     if (!await launchUrl(Uri.parse(url))) {
       throw 'Could not launch $url';
-    } else {
-      throw Exception("url is empty");
     }
   }
 }

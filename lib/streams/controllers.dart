@@ -1,7 +1,7 @@
 import 'package:rxdart/rxdart.dart';
 
 import '../base.dart';
-import '../models/datas.dart';
+import '../models/datamap.dart';
 import '../services/news.dart';
 
 class SingleControllers {
@@ -18,6 +18,10 @@ class SinkController {
   final SingleControllers controllers;
   final News news;
 
+  factory SinkController.getInstance(
+          {required SingleControllers controllers, required News news}) =>
+      SinkController._(controllers, news);
+
   Stream<List<DataMap>> get filteredBySearchValue =>
       CombineLatestStream.combine2(
           controllers.overseasNews.bStream, controllers.searchValue.bStream,
@@ -29,8 +33,4 @@ class SinkController {
         }
         return a;
       });
-
-  factory SinkController.getInstance(
-          {required SingleControllers controllers, required News news}) =>
-      SinkController._(controllers, news);
 }

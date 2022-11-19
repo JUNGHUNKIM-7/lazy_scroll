@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/datas.dart';
+import '../models/datamap.dart';
 import '../services/news.dart';
 import 'controllers.dart';
 import 'enums.dart';

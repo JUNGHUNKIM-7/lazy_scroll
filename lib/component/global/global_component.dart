@@ -20,14 +20,14 @@ class MainBottomNavigation extends ConsumerWidget {
       backgroundColor: Colors.black.withOpacity(0.5),
       currentIndex: idx,
       showUnselectedLabels: false,
-      selectedItemColor: Colors.black,
+      selectedItemColor: Colors.white60,
       selectedIconTheme: const IconThemeData(
-        size: 40,
-        color: Colors.black,
+        size: 30,
+        color: Colors.white60,
         shadows: [
           Shadow(
-            color: Colors.grey,
-            blurRadius: 2,
+            color: Colors.black,
+            blurRadius: 8,
             offset: Offset(2.0, 2.0),
           )
         ],
@@ -39,6 +39,23 @@ class MainBottomNavigation extends ConsumerWidget {
         for (List i in bottomItems)
           BottomNavigationBarItem(icon: Icon(i.first), label: i.last),
       ],
+    );
+  }
+}
+
+class AppBarSpace extends StatelessWidget {
+  const AppBarSpace({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const PreferredSize(
+      preferredSize: Size.fromHeight(200),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: SearchField(),
+      ),
     );
   }
 }
