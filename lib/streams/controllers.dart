@@ -16,7 +16,7 @@ class SingleControllers {
           if ((value ?? "").isEmpty) {
             return Stream.value(null);
           }
-          return Stream.value(value?.toLowerCase());
+          return Stream.value(value?.toLowerCase().trim());
         },
       );
 }
@@ -36,7 +36,8 @@ class SinkController {
           controllers.overseasNews.bStream, controllers.getSearchVal, (a, b) {
         if (b != null && b.isNotEmpty) {
           return a
-              .where((element) => (element.title ?? "").contains(b))
+              .where((element) =>
+                  (element.title?.toLowerCase().trim() ?? "").contains(b))
               .toList();
         }
         return a;
