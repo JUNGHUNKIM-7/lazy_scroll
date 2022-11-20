@@ -10,6 +10,15 @@ class SingleControllers {
 
   final overseasNews = SingleController<List<DataMap>>([]);
   final searchValue = SingleController<String?>(null);
+
+  Stream<String?> get getSearchVal => searchValue.bStream.distinct().switchMap(
+        (value) {
+          if ((value ?? "").isEmpty) {
+            return Stream.value(null);
+          }
+          return Stream.value(value?.toLowerCase());
+        },
+      );
 }
 
 class SinkController {
@@ -24,8 +33,7 @@ class SinkController {
 
   Stream<List<DataMap>> get filteredBySearchValue =>
       CombineLatestStream.combine2(
-          controllers.overseasNews.bStream, controllers.searchValue.bStream,
-          (a, b) {
+          controllers.overseasNews.bStream, controllers.getSearchVal, (a, b) {
         if (b != null && b.isNotEmpty) {
           return a
               .where((element) => (element.title ?? "").contains(b))

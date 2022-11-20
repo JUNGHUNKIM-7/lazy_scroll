@@ -3,6 +3,7 @@ import 'package:rxdart/rxdart.dart';
 abstract class Base<T> {
   T _state;
   Base(T state) : _state = state;
+  T get currState => _state;
   set setState(T value) => _state = value;
   void dispose();
 }
